@@ -2,6 +2,20 @@
 
 set -e
 
+check_dependency() {
+  cmd=$1
+  if ! command -v $cmd >/dev/null 2>&1 ; then
+    echo "$cmd could not be found"
+    echo "Please install $cmd"
+    exit 1
+  fi
+}
+
+check_dependency openssl
+check_dependency ssh-keygen
+check_dependency docker
+check_dependency docker-compose
+
 echo "Generating SECRET_KEY_BASE"
 secret_key_base=$(openssl rand -hex 64)
 echo "Writing SECRET_KEY_BASE to .env-back"
