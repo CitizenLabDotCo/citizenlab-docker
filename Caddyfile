@@ -4,8 +4,10 @@
 	#header_up Host {http.reverse_proxy.upstream.hostport}
 #}
 
-file_server /uploads/* {
-	root /uploads
+handle /uploads/* {
+	root /uploads/* /uploads/
+	uri strip_prefix /uploads
+	file_server
 }
 
-# reverse_proxy cl-front:3000
+reverse_proxy cl-front:3000
