@@ -36,6 +36,12 @@ echo "Writing JWT_RS256_PUBLIC_KEY to .env-back"
 sed -i "s|JWT_RS256_PUBLIC_KEY=.*$|JWT_RS256_PUBLIC_KEY=${jwt_rs256_public_key}|" .env-back
 echo "OK\n"
 
+echo "Generating POSTGRES_PASSWORD"
+postgres_password=$(openssl rand -base64 24)
+sed -i "s/POSTGRES_PASSWORD=.*$/POSTGRES_PASSWORD=${postgres_password}/" .env-back
+sed -i "s/POSTGRES_PASSWORD=.*$/POSTGRES_PASSWORD=${postgres_password}/" .env-postgres
+echo "OK\n"
+
 echo "Cleaning up"
 rm jwtRS256.key jwtRS256.key.pub
 echo "OK"
