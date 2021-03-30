@@ -1,0 +1,81 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: "postgis/postgis:12-3.1"
+    volumes:
+      - "./postgresql-data:/var/lib/postgresql/data"
+    env_file:
+      - ".env-postgres"
+
+  web:
+    container_name: cl-back-web
+    depends_on:
+      - "postgres"
+      - "rabbitmq"
+      - 'memcached'
+    image: citizenlabdotco/back-essential:${CL_VERSION}
+    ports:
+      - "4000:4000"
+    volumes:
+      - "./uploads:/cl2_back/public/uploads"
+    env_file:
+      - ".env-back"
+
+  que:
+    container_name: cl-que
+    depends_on:
+      - "postgres"
+      - "rabbitmq"
+    image: citizenlabdotco/back-essential:${CL_VERSION}
+    command: bundle exec que
+    volumes:
+      - "./uploads:/cl2_back/public/uploads"
+    env_file:
+      - ".env-back"
+
+  rabbitmq:
+    container_name: cl-back-rabbit
+    image: "rabbitmq:3.7"
+
+  front:
+    container_name: cl-front
+    image: citizenlabdotco/front-essential:${CL_VERSION}
+    env_file:
+      - ".env-front"
+    command: npm run start:production
+
+  memcached:
+    image: memcached:alpine
+    command: memcached -m 64
+
+  # nginx:
+  #   image: nginx
+  #   volumes:
+  #     - "./nginx/nginx.conf:/etc/nginx/nginx.conf:ro"
+  #     - "./uploads:/var/www/uploads:ro"
+
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on:
+      - "web"
+      - "front"
+    ports:
+      - "80:80"
+      - "443:443"
+    env_file:
+      - ".env-caddy"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - "./uploads:/uploads:ro"
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:
+networks:
+  default:
+    name: citizenlab-docker
