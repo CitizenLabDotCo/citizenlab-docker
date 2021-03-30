@@ -1,13 +1,18 @@
 {$SITE_ADDRESS}
 
-#reverse_proxy ^/(api|auth|web_api|admin_api|hooks)/(.*)$ cl-back-web:4000 {
-	#header_up Host {http.reverse_proxy.upstream.hostport}
-#}
 
 handle /uploads/* {
 	root /uploads/* /uploads/
 	uri strip_prefix /uploads
 	file_server
+}
+
+@back_requests {
+	path_regexp ^/(api|auth|web_api|admin_api|hooks)/(.*)$
+}
+
+reverse_proxy @back_requests cl-back-web:4000 {
+	header_up Host {http.reverse_proxy.upstream.hostport}
 }
 
 reverse_proxy cl-front:3000
