@@ -6,24 +6,24 @@ services:
     volumes:
       - "./postgresql-data:/var/lib/postgresql/data"
     env_file:
-      - ".env-postgres"
+      - ".env"
 
   web:
-    container_name: cl-back-web
+    container_name: cl-docker-back-web
     depends_on:
       - "postgres"
       - "rabbitmq"
       - 'memcached'
     image: citizenlabdotco/back-essential:${CL_VERSION}
-    ports:
-      - "4000:4000"
     volumes:
       - "./uploads:/cl2_back/public/uploads"
     env_file:
-      - ".env-back"
+      - ".env"
+    environment:
+      RAILS_ENV: production
 
   que:
-    container_name: cl-que
+    container_name: cl-docker-que
     depends_on:
       - "postgres"
       - "rabbitmq"
@@ -32,29 +32,26 @@ services:
     volumes:
       - "./uploads:/cl2_back/public/uploads"
     env_file:
-      - ".env-back"
+      - ".env"
+    environment:
+      RAILS_ENV: production
 
   rabbitmq:
-    container_name: cl-back-rabbit
+    container_name: cl-docker-back-rabbit
     image: "rabbitmq:3.7"
 
   front:
-    container_name: cl-front
+    container_name: cl-docker-front
     image: citizenlabdotco/front-essential:${CL_VERSION}
+    environment:
+      NODE_ENV: production
     env_file:
-      - ".env-front"
+      - ".env"
     command: npm run start:production
 
   memcached:
     image: memcached:alpine
     command: memcached -m 64
-
-  # nginx:
-  #   image: nginx
-  #   volumes:
-  #     - "./nginx/nginx.conf:/etc/nginx/nginx.conf:ro"
-  #     - "./uploads:/var/www/uploads:ro"
-
 
   caddy:
     image: caddy:2
@@ -66,7 +63,7 @@ services:
       - "80:80"
       - "443:443"
     env_file:
-      - ".env-caddy"
+      - ".env"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - "./uploads:/uploads:ro"
@@ -78,4 +75,4 @@ volumes:
   caddy_config:
 networks:
   default:
-    name: citizenlab-docker
+    name: cl-docker
