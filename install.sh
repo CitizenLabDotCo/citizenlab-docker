@@ -38,7 +38,7 @@ echo "OK\n"
 
 echo "Generating POSTGRES_PASSWORD"
 postgres_password=$(openssl rand -base64 24)
-sed -i "s/POSTGRES_PASSWORD=.*$/POSTGRES_PASSWORD=${postgres_password}/" .env
+sed -i "s|POSTGRES_PASSWORD=.*$|POSTGRES_PASSWORD=${postgres_password}|" .env
 echo "OK\n"
 
 echo "Cleaning up"
