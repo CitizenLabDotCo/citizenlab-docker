@@ -15,12 +15,12 @@ services:
       - "rabbitmq"
       - 'memcached'
     image: citizenlabdotco/back-essential:${CL_VERSION}
-    ports:
-      - "4000:4000"
     volumes:
       - "./uploads:/cl2_back/public/uploads"
     env_file:
       - ".env"
+    environment:
+      RAILS_ENV: production
 
   que:
     container_name: cl-docker-que
@@ -33,6 +33,8 @@ services:
       - "./uploads:/cl2_back/public/uploads"
     env_file:
       - ".env"
+    environment:
+      RAILS_ENV: production
 
   rabbitmq:
     container_name: cl-docker-back-rabbit

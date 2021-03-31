@@ -1,6 +1,5 @@
 {$CL_SETTINGS_HOST}
 
-
 handle /uploads/* {
 	root /uploads/* /uploads/
 	uri strip_prefix /uploads
@@ -11,8 +10,8 @@ handle /uploads/* {
 	path_regexp ^/(api|auth|web_api|admin_api|hooks)/(.*)$
 }
 
-reverse_proxy @back_requests cl-back-web:4000 {
+reverse_proxy @back_requests web:4000 {
 	header_up Host {http.reverse_proxy.upstream.hostport}
 }
 
-reverse_proxy cl-front:3000
+reverse_proxy front:3000
