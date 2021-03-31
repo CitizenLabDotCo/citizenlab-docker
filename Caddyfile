@@ -1,4 +1,4 @@
-{$SITE_ADDRESS}
+{$CL_SETTINGS_HOST}
 
 
 handle /uploads/* {
